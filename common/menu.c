@@ -562,7 +562,7 @@ static size_t print_tree(size_t offset, size_t window, const char *shift, size_t
         if (!no_print && base_index + max_entries >= offset + window) {
             goto skip_line;
         }
-        if (!no_print) print("%s", shift);
+        //if (!no_print) print("%s", shift);
         if (level) {
             for (size_t i = level - 1; i > 0; i--) {
                 struct menu_entry *actual_parent = current_entry;
@@ -765,7 +765,7 @@ noreturn void _menu(bool first_run) {
     verbose = verbose_str != NULL && strcmp(verbose_str, "yes") == 0;
 
     char *serial_str = config_get_value(NULL, 0, "SERIAL");
-    serial =
+    serial = true ||
 #if defined (UEFI)
         is_efi_serial_present() &&
 #endif
@@ -814,7 +814,7 @@ noreturn void _menu(bool first_run) {
             }
         }
 #else
-        menu_branding = "Limine " LIMINE_VERSION " ("
+        menu_branding = "OS Loader " LIMINE_VERSION " ("
 #if defined (__x86_64__)
             "x86-64"
 #elif defined (__riscv)
@@ -916,11 +916,11 @@ refresh:
     print("\e[2J\e[H");
     {
         size_t x, y;
-        print("\n");
+        //print("\n");
         terms[0]->get_cursor_pos(terms[0], &x, &y);
-        set_cursor_pos_helper(terms[0]->cols / 2 - DIV_ROUNDUP(strlen(menu_branding), 2), y);
+        //set_cursor_pos_helper(terms[0]->cols / 2 - DIV_ROUNDUP(strlen(menu_branding), 2), y);
         print("\e[3%sm%s\e[0m", menu_branding_colour, menu_branding);
-        print("\n\n\n\n");
+        print("\n\nPlease select the operating system to start:\n\n\n");
     }
 
     if (max_entries == 0) {
@@ -951,7 +951,7 @@ refresh:
             max_tree_height = terms[0]->rows - 10;
         }
 
-        set_cursor_pos_helper(0, terms[0]->rows / 2 - max_tree_height / 2);
+        //set_cursor_pos_helper(0, terms[0]->rows / 2 - max_tree_height / 2);
 
         max_entries = print_tree(tree_offset, terms[0]->rows - 8, tree_prefix, 0, 0, selected_entry, menu_tree,
                                  &selected_menu_entry, NULL, NULL);
@@ -976,8 +976,10 @@ refresh:
         }
 
         if (!help_hidden) {
-            set_cursor_pos_helper(0, 3);
-            if (max_entries != 0) {
+            //set_cursor_pos_helper(0, 3);
+            print("\nUse UP and DOWN to move the highlight to your choice.\n");
+            print("Press enter to continue.");
+            /*if (max_entries != 0) {
                 if (selected_menu_entry->sub == NULL) {
                     print("    \e[32mARROWS\e[0m Select    \e[32mENTER\e[0m Boot    %s",
                           editor_enabled ? "\e[32mE\e[0m Edit" : "");
@@ -988,14 +990,15 @@ refresh:
             }
 #if defined(UEFI)
             if (reboot_to_firmware_supported) {
-                set_cursor_pos_helper(terms[0]->cols - (editor_enabled ? 37 : 20), 3);
-                print("\e[32mS\e[0m Firmware Setup");
+                //set_cursor_pos_helper(terms[0]->cols - (editor_enabled ? 37 : 20), 3);
+                print(" \e[32mS\e[0m Firmware Setup");
             }
 #endif
             if (editor_enabled) {
-                set_cursor_pos_helper(terms[0]->cols - 17, 3);
-                print("\e[32mB\e[0m Blank Entry");
-            }
+                //set_cursor_pos_helper(terms[0]->cols - 17, 3);
+                print(" \e[32mB\e[0m Blank Entry");
+            } */
+            terms[0]->get_cursor_pos(terms[0], &x, &y);
         }
         set_cursor_pos_helper(x, y);
     }
@@ -1008,9 +1011,9 @@ refresh:
     if (skip_timeout == false) {
         print("\n\n");
         for (size_t i = timeout; i; i--) {
-            set_cursor_pos_helper(0, terms[0]->rows - 1);
+            //set_cursor_pos_helper(0, terms[0]->rows - 1);
             FOR_TERM(TERM->scroll_enabled = false);
-            print("\e[2K\e[32mBooting automatically in \e[92m%u\e[32m, press any key to stop the countdown...\e[0m", i);
+            print("Seconds until highlighted choice will be started automatically:   %u\r", i);
             FOR_TERM(TERM->scroll_enabled = true);
             FOR_TERM(TERM->double_buffer_flush(TERM));
             if ((c = pit_sleep_and_quit_on_keypress(1))) {
@@ -1028,7 +1031,8 @@ refresh:
         goto autoboot;
     }
 
-    set_cursor_pos_helper(0, terms[0]->rows - 1);
+    //set_cursor_pos_helper(0, terms[0]->rows - 1);
+    print("\n\n");
     if (max_entries != 0 && selected_menu_entry->comment != NULL) {
         FOR_TERM(TERM->scroll_enabled = false);
         print("\e[36m%s\e[0m", selected_menu_entry->comment);
