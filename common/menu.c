@@ -562,7 +562,9 @@ static size_t print_tree(size_t offset, size_t window, const char *shift, size_t
         if (!no_print && base_index + max_entries >= offset + window) {
             goto skip_line;
         }
-        //if (!no_print) print("%s", shift);
+        if (base_index + max_entries == selected_entry) {
+            if (!no_print) print("\e[7m");
+        }
         if (level) {
             for (size_t i = level - 1; i > 0; i--) {
                 struct menu_entry *actual_parent = current_entry;
@@ -592,9 +594,8 @@ static size_t print_tree(size_t offset, size_t window, const char *shift, size_t
         cur_len += 3;
         if (base_index + max_entries == selected_entry) {
             *selected_menu_entry = current_entry;
-            if (!no_print) print("\e[7m");
         }
-        if (!no_print) print(" %s \e[27m\n", current_entry->name);
+        if (!no_print) print(" %s\e[27m\n", current_entry->name);
         (*max_height)++;
         cur_len += 1 + strlen(current_entry->name) + 1;
 skip_line:
@@ -707,6 +708,7 @@ not_found:;
 #endif
 
 noreturn void _menu(bool first_run) {
+    // TODO: Add option to specify adding bottom text and to disable the OS Loader text.
     size_t data_size = (uintptr_t)data_end - (uintptr_t)data_begin;
 #if defined (BIOS)
     size_t s2_data_size = (uintptr_t)s2_data_end - (uintptr_t)s2_data_begin;
@@ -765,7 +767,7 @@ noreturn void _menu(bool first_run) {
     verbose = verbose_str != NULL && strcmp(verbose_str, "yes") == 0;
 
     char *serial_str = config_get_value(NULL, 0, "SERIAL");
-    serial = true ||
+    serial =
 #if defined (UEFI)
         is_efi_serial_present() &&
 #endif
@@ -919,7 +921,8 @@ refresh:
         //print("\n");
         terms[0]->get_cursor_pos(terms[0], &x, &y);
         //set_cursor_pos_helper(terms[0]->cols / 2 - DIV_ROUNDUP(strlen(menu_branding), 2), y);
-        print("\e[3%sm%s\e[0m", menu_branding_colour, menu_branding);
+        //print("\e[3%sm%s\e[0m", menu_branding_colour, menu_branding);
+        print("OS Loader V4.00");
         print("\n\nPlease select the operating system to start:\n\n\n");
     }
 
@@ -977,8 +980,8 @@ refresh:
 
         if (!help_hidden) {
             //set_cursor_pos_helper(0, 3);
-            print("\nUse UP and DOWN to move the highlight to your choice.\n");
-            print("Press enter to continue.");
+            print("\nUse ↑ and ↓ to move the highlight to your choice.\n");
+            print("Press Enter to choose.");
             /*if (max_entries != 0) {
                 if (selected_menu_entry->sub == NULL) {
                     print("    \e[32mARROWS\e[0m Select    \e[32mENTER\e[0m Boot    %s",
@@ -1033,11 +1036,12 @@ refresh:
 
     //set_cursor_pos_helper(0, terms[0]->rows - 1);
     print("\n\n");
-    if (max_entries != 0 && selected_menu_entry->comment != NULL) {
+    /*if (max_entries != 0 && selected_menu_entry->comment != NULL) {
         FOR_TERM(TERM->scroll_enabled = false);
         print("\e[36m%s\e[0m", selected_menu_entry->comment);
         FOR_TERM(TERM->scroll_enabled = true);
-    }
+    }*/
+    set_cursor_pos_helper(0, 0);
 
     if (booting_from_editor) {
         if (booting_from_blank) {
