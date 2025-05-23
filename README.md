@@ -1,4 +1,10 @@
-# Limine
+# Limine NTLDR
+
+A fork of Limine that attempts to make Limine look like NTLDR (also known as OS Loader in NT 4 and below) from Windows 2000/XP 
+
+![Reference Limine NTLDR screenshot](screenshot-ntldr.png)
+
+## ORIGINAL README
 
 <p align="center">
     <img src="https://github.com/limine-bootloader/limine/blob/trunk/logo.png?raw=true" alt="Limine's logo"/>

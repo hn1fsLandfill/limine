@@ -190,7 +190,7 @@ uefi-x86-64-test:
 	$(MAKE) test-clean
 	$(MAKE) test.hdd
 	$(MAKE) limine-uefi-x86-64
-#	$(MAKE) -C test -f test.mk TOOLCHAIN_FILE='$(call SHESCAPE,$(BUILDDIR))/toolchain-files/uefi-x86_64-toolchain.mk'
+	$(MAKE) -C test -f test.mk TOOLCHAIN_FILE='$(call SHESCAPE,$(BUILDDIR))/toolchain-files/uefi-x86_64-toolchain.mk'
 	rm -rf test_image/
 	mkdir test_image
 	sudo losetup -Pf --show test.hdd > loopback_dev

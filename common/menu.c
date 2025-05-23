@@ -1032,7 +1032,11 @@ refresh:
         for (size_t i = timeout; i; i--) {
             //set_cursor_pos_helper(0, terms[0]->rows - 1);
             FOR_TERM(TERM->scroll_enabled = false);
-            print("Seconds until highlighted choice will be started automatically:   %u\r", i);
+            if(i < 10) {
+                print("Seconds until highlighted choice will be started automatically:    %u\r", i);
+            } else {
+                print("Seconds until highlighted choice will be started automatically:   %u\r", i);
+            }
             FOR_TERM(TERM->scroll_enabled = true);
             FOR_TERM(TERM->double_buffer_flush(TERM));
             if ((c = pit_sleep_and_quit_on_keypress(1))) {
