@@ -37,7 +37,9 @@ EFI_GUID limine_efi_vendor_guid =
 #define TOK_COMMENT 4
 
 static char *menu_branding = NULL;
+static char *bottom_text = NULL;
 static char *menu_branding_colour = NULL;
+static bool no_osloader = false;
 no_unwind bool booting_from_editor = false;
 static no_unwind bool booting_from_blank = false;
 static no_unwind char saved_orig_entry[EDITOR_MAX_BUFFER_SIZE];
@@ -766,6 +768,9 @@ noreturn void _menu(bool first_run) {
     char *verbose_str = config_get_value(NULL, 0, "VERBOSE");
     verbose = verbose_str != NULL && strcmp(verbose_str, "yes") == 0;
 
+    char *no_osloader_str = config_get_value(NULL, 0, "NO_OSLOADER");
+    no_osloader = no_osloader_str != NULL && strcmp(no_osloader_str, "yes") == 0;
+
     char *serial_str = config_get_value(NULL, 0, "SERIAL");
     serial =
 #if defined (UEFI)
@@ -922,7 +927,9 @@ refresh:
         terms[0]->get_cursor_pos(terms[0], &x, &y);
         //set_cursor_pos_helper(terms[0]->cols / 2 - DIV_ROUNDUP(strlen(menu_branding), 2), y);
         //print("\e[3%sm%s\e[0m", menu_branding_colour, menu_branding);
-        print("OS Loader V4.00");
+        if(!no_osloader) {
+            print("OS Loader V4.00");
+        }
         print("\n\nPlease select the operating system to start:\n\n\n");
     }
 
@@ -1009,6 +1016,15 @@ refresh:
     if (max_entries == 0 || selected_menu_entry->sub != NULL)
         skip_timeout = true;
 
+    bottom_text = config_get_value(NULL, 0, "NTLDR_BOTTOM");
+    if (bottom_text != NULL) {
+        size_t x, y;
+        terms[0]->get_cursor_pos(terms[0], &x, &y);
+        set_cursor_pos_helper(0, terms[0]->rows - 2);
+        print("%s", bottom_text);
+        set_cursor_pos_helper(x, y);
+    }
+
     int c;
 
     if (skip_timeout == false) {
@@ -1034,13 +1050,8 @@ refresh:
         goto autoboot;
     }
 
-    //set_cursor_pos_helper(0, terms[0]->rows - 1);
     print("\n\n");
-    /*if (max_entries != 0 && selected_menu_entry->comment != NULL) {
-        FOR_TERM(TERM->scroll_enabled = false);
-        print("\e[36m%s\e[0m", selected_menu_entry->comment);
-        FOR_TERM(TERM->scroll_enabled = true);
-    }*/
+
     set_cursor_pos_helper(0, 0);
 
     if (booting_from_editor) {
@@ -1114,6 +1125,28 @@ timeout_aborted:
                         }
                     } else {
                         reset_term();
+                        if(no_osloader) {
+                            size_t y = terms[0]->rows-2;
+                            set_cursor_pos_helper(0,y);
+
+                            const char *starting_text = "Starting Windows...";
+
+                            set_cursor_pos_helper(terms[0]->cols / 2 - DIV_ROUNDUP(strlen(starting_text), 2), y);
+                            print("%s\n", starting_text);
+                            for(size_t i = 0; i<terms[0]->cols; i++) {
+                                print("▐");
+                            }
+                            FOR_TERM(TERM->cursor_enabled = false);
+                            print("\n\n");
+                            if (bottom_text != NULL) {
+                                print("%s", bottom_text);
+                            }
+                            pit_sleep_and_quit_on_keypress(2);
+                            print("\r");
+                            for(unsigned int i = 0; i<strlen(bottom_text); i++) {
+                                print(" ");
+                            }
+                        }
                     }
                 }
 

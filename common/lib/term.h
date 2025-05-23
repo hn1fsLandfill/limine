@@ -37,6 +37,10 @@ extern int term_backend;
     } \
 } while (0)
 
+static inline void set_cursor_pos_helper(size_t x, size_t y) {
+    print("\e[%u;%uH", (int)y + 1, (int)x + 1);
+}
+
 static inline void reset_term(void) {
     for (size_t i = 0; i < terms_i; i++) {
         struct flanterm_context *term = terms[i];
@@ -46,10 +50,6 @@ static inline void reset_term(void) {
         term->cursor_enabled = true;
         term->double_buffer_flush(term);
     }
-}
-
-static inline void set_cursor_pos_helper(size_t x, size_t y) {
-    print("\e[%u;%uH", (int)y + 1, (int)x + 1);
 }
 
 void term_notready(void);
