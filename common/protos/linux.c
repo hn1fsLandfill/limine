@@ -299,7 +299,8 @@ noreturn void linux_load(char *config, char *cmdline) {
         panic(true, "linux: Kernel path not specified");
     }
 
-    print("linux: Loading kernel `%#`...\n", kernel_path);
+    //print("linux: Loading kernel `%#`...\n", kernel_path);
+    print("%#\n", kernel_path);
 
     if ((kernel_file = uri_open(kernel_path)) == NULL)
         panic(true, "linux: Failed to open kernel with path `%#`. Is the path correct?", kernel_path);
@@ -405,7 +406,8 @@ noreturn void linux_load(char *config, char *cmdline) {
         if (module_path == NULL)
             break;
 
-        print("linux: Loading module `%#`...\n", module_path);
+        //print("linux: Loading module `%#`...\n", module_path);
+        print("%#\n", module_path);
 
         struct file_handle *module;
         if ((module = uri_open(module_path)) == NULL)

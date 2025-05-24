@@ -4,6 +4,8 @@ A fork of Limine that attempts to make Limine look like NTLDR (also known as OS 
 
 ![Reference Limine NTLDR screenshot](screenshot-ntldr.png)
 
+Head to [CONFIG.md](CONFIG.md) for configuration options.
+
 ## ORIGINAL README
 
 <p align="center">

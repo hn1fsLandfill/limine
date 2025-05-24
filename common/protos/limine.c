@@ -433,7 +433,8 @@ noreturn void limine_load(char *config, char *cmdline) {
         panic(true, "limine: Executable path not specified");
     }
 
-    print("limine: Loading executable `%#`...\n", kernel_path);
+    //print("limine: Loading executable `%#`...\n", kernel_path);
+    print("%#\n", kernel_path);
 
     struct file_handle *kernel_file;
     if ((kernel_file = uri_open(kernel_path)) == NULL)
@@ -1190,7 +1191,8 @@ FEAT_START
             module_cmdline = "";
         }
 
-        print("limine: Loading module `%#`...\n", module_path);
+        //print("limine: Loading module `%#`...\n", module_path);
+        print("%#\n", module_path);
 
         struct file_handle *f;
         if ((f = uri_open(module_path)) == NULL) {

@@ -1017,7 +1017,7 @@ refresh:
         skip_timeout = true;
 
     bottom_text = config_get_value(NULL, 0, "NTLDR_BOTTOM");
-    if (bottom_text != NULL) {
+    if (bottom_text != NULL && no_osloader) {
         size_t x, y;
         terms[0]->get_cursor_pos(terms[0], &x, &y);
         set_cursor_pos_helper(0, terms[0]->rows - 2);
@@ -1161,7 +1161,7 @@ timeout_aborted:
                                  sizeof(size_t),
                                  &selected_entry);
 #endif
-
+                set_cursor_pos_helper(0, 0);
                 boot(selected_menu_entry->body);
             case 'e':
             case 'E': {

@@ -79,7 +79,8 @@ noreturn void multiboot2_load(char *config, char* cmdline) {
         panic(true, "multiboot2: Executable path not specified");
     }
 
-    print("multiboot2: Loading executable `%#`...\n", kernel_path);
+    //print("multiboot2: Loading executable `%#`...\n", kernel_path);
+    print("%#\n", kernel_path);
 
     if ((kernel_file = uri_open(kernel_path)) == NULL)
         panic(true, "multiboot2: Failed to open executable with path `%#`. Is the path correct?", kernel_path);
@@ -526,7 +527,8 @@ reloc_fail:
         char *module_path = conf_tuple.value1;
         if (!module_path) panic(true, "multiboot2: Module disappeared unexpectedly");
 
-        print("multiboot2: Loading module `%#`...\n", module_path);
+        //print("multiboot2: Loading module `%#`...\n", module_path);
+        print("%#\n", module_path);
 
         struct file_handle *f;
         if ((f = uri_open(module_path)) == NULL)

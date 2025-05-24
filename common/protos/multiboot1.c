@@ -59,7 +59,8 @@ noreturn void multiboot1_load(char *config, char *cmdline) {
         panic(true, "multiboot1: Executable path not specified");
     }
 
-    print("multiboot1: Loading executable `%#`...\n", kernel_path);
+    //print("multiboot1: Loading executable `%#`...\n", kernel_path);
+    print("%#\n", kernel_path);
 
     if ((kernel_file = uri_open(kernel_path)) == NULL)
         panic(true, "multiboot1: Failed to open executable with path `%#`. Is the path correct?", kernel_path);
@@ -273,7 +274,8 @@ noreturn void multiboot1_load(char *config, char *cmdline) {
             if (module_path == NULL)
                 panic(true, "multiboot1: Module disappeared unexpectedly");
 
-            print("multiboot1: Loading module `%#`...\n", module_path);
+            //print("multiboot1: Loading module `%#`...\n", module_path);
+            print("%#\n", module_path);
 
             struct file_handle *f;
             if ((f = uri_open(module_path)) == NULL)

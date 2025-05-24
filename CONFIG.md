@@ -1,3 +1,10 @@
+# Additional options for Limine NTLDR
+
+* `no_osloader` - When set to `yes` it will emulate NTLDR from Windows 2000/XP
+instead of OS Loader from Windows NT 4 and below
+* `ntldr_bottom` - A string that will be displayed at the bottom when
+emulating NTLDR instead of OS Loader
+
 # Limine configuration file
 
 ## Location of the config file
