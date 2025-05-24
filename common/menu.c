@@ -634,6 +634,8 @@ extern symbol bss_begin;
 extern symbol bss_end;
 #endif
 
+static bool nographics = false;
+
 static void menu_init_term(void) {
     // If there is GRAPHICS config key and the value is "yes", enable graphics
 #if defined (BIOS)
@@ -659,6 +661,7 @@ static void menu_init_term(void) {
     } else {
 #if defined (BIOS)
         if (!quiet) {
+            nographics = true;
             vga_textmode_init(true);
         }
 #endif
@@ -1141,7 +1144,10 @@ timeout_aborted:
                                 print("▐");
                             }
                             FOR_TERM(TERM->cursor_enabled = false);
-                            print("\n\n");
+                            print("\n");
+                            if(!nographics) {
+                                print("\n");
+                            }
                             if (bottom_text != NULL) {
                                 print("%s", bottom_text);
                             }
